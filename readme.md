@@ -1,4 +1,4 @@
-```markdown
+
 # 🏰 Tower Defense – «Королевство»
 
 Добро пожаловать в **Tower Defense «Королевство»** — полноценную браузерную игру в жанре Tower Defense, написанную на чистом JavaScript (ES-модули) с использованием HTML5 Canvas, CSS3 и Bootstrap 5.
@@ -201,4 +201,3 @@ export const BALANCE = {
 ---
 
 **Разработано с ❤️ для всех любителей Tower Defense.**
-```
