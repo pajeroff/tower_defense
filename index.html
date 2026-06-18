@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tower Defense – Королевство</title>
+
+    <!-- Bootstrap 5 (CSS) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Кастомные стили -->
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+    <!-- Контейнер для уведомлений (слева) -->
+    <div id="notificationContainer" style="position:fixed; left:10px; top:10px; z-index:9999; width:300px; display:flex; flex-direction:column-reverse; gap:5px;"></div>
+
+    <!-- Контейнер для достижений (справа) -->
+    <div id="achievementContainer" style="position:fixed; right:10px; top:10px; z-index:9999; width:300px; display:flex; flex-direction:column-reverse; gap:5px;"></div>
+
+    <!-- ========================================================= -->
+    <!-- 1. ГЛАВНОЕ МЕНЮ (MAIN MENU)                              -->
+    <!-- ========================================================= -->
+    <div id="mainMenu" class="container-fluid vh-100 d-flex flex-column justify-content-center align-items-center text-center">
+        <h1 class="display-1 fw-bold text-light">🏰 Королевство</h1>
+        <p class="lead text-light">Защити свой замок от полчищ врагов!</p>
+
+        <div class="mt-4">
+            <button id="btnPlay" class="btn btn-lg btn-warning m-2">⚔️ Играть</button>
+            <button id="btnShop" class="btn btn-lg btn-info m-2">🛒 Магазин</button>
+            <button id="btnStats" class="btn btn-lg btn-secondary m-2">📊 Статистика</button>
+            <button id="btnFaq" class="btn btn-lg btn-secondary m-2">❓ FAQ</button>
+            <button id="btnReset" class="btn btn-lg btn-danger m-2">🔄 Сбросить прогресс</button>
+        </div>
+
+        <div class="mt-3 text-light">
+            <span>Очки опыта: </span><span id="mainExp">0</span>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- 2. ЭКРАН ВЫБОРА ПАРАМЕТРОВ (PRE-GAME)                    -->
+    <!-- ========================================================= -->
+    <div id="preGameScreen" class="container-fluid vh-100 d-none flex-column justify-content-center align-items-center">
+        <h2 class="text-light mb-4">Выбор параметров</h2>
+
+        <!-- Выбор короля -->
+        <div class="row w-75 mb-3">
+            <h4 class="text-light">Выберите короля</h4>
+            <div class="col-md-3" data-king="warrior">
+                <div class="card king-card bg-dark text-light p-2 text-center">
+                    <h5>Воин</h5>
+                    <p>Ярость: +50% урона на 10с</p>
+                </div>
+            </div>
+            <div class="col-md-3" data-king="mage">
+                <div class="card king-card bg-dark text-light p-2 text-center">
+                    <h5>Маг</h5>
+                    <p>Замедление: -40% скорости на 8с</p>
+                </div>
+            </div>
+            <div class="col-md-3" data-king="archer">
+                <div class="card king-card bg-dark text-light p-2 text-center">
+                    <h5>Лучник</h5>
+                    <p>Меткий выстрел: +30% радиуса на 12с</p>
+                </div>
+            </div>
+            <div class="col-md-3" data-king="engineer">
+                <div class="card king-card bg-dark text-light p-2 text-center">
+                    <h5>Инженер</h5>
+                    <p>Экономия: следующая башня бесплатно</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Выбор сложности -->
+        <div class="row w-75 mb-3">
+            <h4 class="text-light">Сложность</h4>
+            <div class="col-md-4">
+                <div class="card difficulty-card bg-dark text-light p-2 text-center" data-diff="easy">
+                    <h5>Лёгкая</h5>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card difficulty-card bg-dark text-light p-2 text-center" data-diff="medium">
+                    <h5>Средняя</h5>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card difficulty-card bg-dark text-light p-2 text-center" data-diff="hard">
+                    <h5>Сложная</h5>
+                </div>
+            </div>
+        </div>
+
+        <!-- Выбор локации -->
+        <div class="row w-75 mb-4">
+            <h4 class="text-light">Локация</h4>
+            <div class="col-md-3">
+                <div class="card location-card bg-dark text-light p-2 text-center" data-location="forest">
+                    <h5>🌲 Лес</h5>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card location-card bg-dark text-light p-2 text-center" data-location="desert">
+                    <h5>🏜️ Пустыня</h5>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card location-card bg-dark text-light p-2 text-center" data-location="snow">
+                    <h5>❄️ Снег</h5>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card location-card bg-dark text-light p-2 text-center" data-location="hell">
+                    <h5>🔥 Ад</h5>
+                </div>
+            </div>
+        </div>
+
+        <button id="btnStartGame" class="btn btn-lg btn-success">🚀 Старт</button>
+        <button id="btnBackMain" class="btn btn-lg btn-secondary mt-2">Назад</button>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- 3. ИГРОВОЙ ЭКРАН (GAME SCREEN)                           -->
+    <!-- ========================================================= -->
+    <div id="gameScreen" class="d-none position-relative" style="width:100vw; height:100vh; background:#1a1a2e; overflow:hidden;">
+        
+        <!-- Canvas для игрового поля -->
+        <canvas id="gameCanvas" class="position-absolute top-0 start-0" style="display:block; width:100%; height:100%;"></canvas>
+
+        <!-- Верхний HUD (поверх Canvas) -->
+        <div id="hud" class="position-absolute top-0 start-0 w-100 p-2 d-flex justify-content-between align-items-center bg-dark bg-opacity-75 text-light" style="z-index:10;">
+            <div class="d-flex gap-3">
+                <span>💰 <span id="goldDisplay">0</span></span>
+                <span>❤️ <span id="castleHealthDisplay">100</span>/<span id="castleMaxHealthDisplay">100</span></span>
+                <span>🌊 Волна <span id="waveDisplay">0</span></span>
+                <span>👾 <span id="enemiesLeft">0</span></span>
+            </div>
+            <div class="d-flex gap-2">
+                <button id="btnPause" class="btn btn-sm btn-warning">⏸️ Пауза</button>
+                <button id="btnSpeed" class="btn btn-sm btn-info">⏩ ×1</button>
+                <!-- Способность короля перенесена вниз, здесь убираем -->
+            </div>
+        </div>
+
+        <!-- Нижняя панель (без кнопок улучшения/продажи/элемента) -->
+        <div id="bottomPanel" class="position-absolute bottom-0 start-0 w-100 p-2 bg-dark bg-opacity-75 d-flex justify-content-center align-items-center gap-3 flex-wrap" style="z-index:10; pointer-events:none;">
+            <button class="btn btn-outline-light tower-btn" data-tower="fast">Быстрая (50💰)</button>
+            <button class="btn btn-outline-light tower-btn" data-tower="normal">Обычная (80💰)</button>
+            <button class="btn btn-outline-light tower-btn" data-tower="sniper">Снайпер (150💰)</button>
+            <!-- Способность короля -->
+            <button id="btnAbility" class="btn btn-sm btn-danger" disabled>⚡ Способность</button>
+            <span id="abilityCooldown" class="text-light ms-2">готово</span>
+        </div>
+
+        <!-- Контекстное меню башни (с кнопками улучшения, продажи, выбора элемента) -->
+        <div id="towerContext" class="position-absolute bg-dark text-light p-2 rounded d-none" style="z-index:20; min-width:200px;">
+            <p>Уровень: <span id="towerLevel">1</span></p>
+            <p>Урон: <span id="towerDamage">0</span></p>
+            <p>Радиус: <span id="towerRange">0</span></p>
+            <p>Элемент: <span id="towerElement">нет</span></p>
+            <p>Улучшение: <span id="towerUpgradeCost">0</span>💰</p>
+            <p>Продажа: <span id="towerSellPrice">0</span>💰</p>
+            <div class="d-flex gap-1 mt-1">
+                <button id="ctxUpgrade" class="btn btn-sm btn-warning">Улучшить</button>
+                <button id="ctxSell" class="btn btn-sm btn-danger">Продать</button>
+            </div>
+            <hr class="my-1">
+            <div class="d-flex gap-1 mt-1">
+                <span class="text-muted small">Элемент (50💰):</span>
+                <button class="btn btn-sm btn-danger element-btn" data-element="fire">🔥</button>
+                <button class="btn btn-sm btn-info element-btn" data-element="ice">❄️</button>
+                <button class="btn btn-sm btn-success element-btn" data-element="poison">☠️</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- 4. МОДАЛЬНЫЕ ОКНА (Bootstrap)                             -->
+    <!-- ========================================================= -->
+
+    <!-- Меню паузы -->
+    <div class="modal fade" id="pauseModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header">
+                    <h5 class="modal-title">⏸️ Пауза</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body d-flex flex-column gap-2">
+                    <button id="resumeBtn" class="btn btn-success">▶️ Продолжить</button>
+                    <button id="endGameBtn" class="btn btn-danger">🏁 Завершить игру</button>
+                    <button id="quitToMenuBtn" class="btn btn-secondary">🏠 В главное меню</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Экран победы/поражения -->
+    <div class="modal fade" id="resultModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resultTitle">Результат</h5>
+                </div>
+                <div class="modal-body">
+                    <p id="resultMessage"></p>
+                    <ul id="resultStats" class="list-unstyled"></ul>
+                    <button id="resultToMenu" class="btn btn-primary">В главное меню</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Магазин улучшений (перманентные) -->
+    <div class="modal fade" id="shopModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header">
+                    <h5 class="modal-title">🛒 Магазин улучшений</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="shopItems" class="row g-3"></div>
+                    <div class="mt-2">Очки опыта: <span id="shopExp">0</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Статистика / Достижения -->
+    <div class="modal fade" id="statsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header">
+                    <h5 class="modal-title">📊 Статистика и достижения</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="statsContent"></div>
+                    <h6>Достижения</h6>
+                    <div id="achievementsList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка FAQ -->
+    <div class="modal fade" id="faqModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header">
+                    <h5 class="modal-title">❓ Часто задаваемые вопросы</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="faqContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка для торговца -->
+    <div class="modal fade" id="traderModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header">
+                    <h5 class="modal-title">🧙‍♂️ Торговец</h5>
+                </div>
+                <div class="modal-body">
+                    <p id="traderOffer"></p>
+                    <p id="traderPrice"></p>
+                    <button id="traderAccept" class="btn btn-success">Принять</button>
+                    <button id="traderDecline" class="btn btn-secondary">Отказаться</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка для выбора элемента башни -->
+    <div class="modal fade" id="elementModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header">
+                    <h5 class="modal-title">✨ Выберите элемент</h5>
+                </div>
+                <div class="modal-body d-flex justify-content-around">
+                    <button class="btn btn-danger element-btn" data-element="fire">🔥 Огонь</button>
+                    <button class="btn btn-info element-btn" data-element="ice">❄️ Лёд</button>
+                    <button class="btn btn-success element-btn" data-element="poison">☠️ Яд</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- ПОДКЛЮЧЕНИЕ СКРИПТОВ                                     -->
+    <!-- ========================================================= -->
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Модули игры -->
+    <script type="module" src="js/balance.js"></script>
+    <script type="module" src="js/storage.js"></script>
+    <script type="module" src="js/path.js"></script>
+    <script type="module" src="js/sound.js"></script>
+    <script type="module" src="js/enemies.js"></script>
+    <script type="module" src="js/towers.js"></script>
+    <script type="module" src="js/abilities.js"></script>
+    <script type="module" src="js/upgrades.js"></script>
+    <script type="module" src="js/events.js"></script>
+    <script type="module" src="js/ui.js"></script>
+    <script type="module" src="js/game.js"></script>
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>

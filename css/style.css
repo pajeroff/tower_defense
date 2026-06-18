@@ -1,0 +1,363 @@
+/* ================================================================
+   css/style.css – Полные кастомные стили для Tower Defense
+   ================================================================ */
+
+/* ---------- Общие ---------- */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #1a1a2e;
+    color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* ---------- Главное меню ---------- */
+#mainMenu {
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f1a 100%);
+    min-height: 100vh;
+}
+#mainMenu h1 {
+    text-shadow: 0 0 30px rgba(255, 193, 7, 0.5);
+}
+#mainMenu .btn {
+    min-width: 160px;
+    transition: transform 0.2s;
+}
+#mainMenu .btn:hover {
+    transform: scale(1.05);
+}
+
+/* ---------- Экран выбора ---------- */
+.king-card,
+.difficulty-card,
+.location-card {
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 2px solid transparent;
+}
+.king-card:hover,
+.difficulty-card:hover,
+.location-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+}
+.king-card.selected,
+.difficulty-card.selected,
+.location-card.selected {
+    border-color: #ffc107 !important;
+    box-shadow: 0 0 30px rgba(255, 193, 7, 0.4);
+    background: rgba(255, 193, 7, 0.15) !important;
+}
+
+/* ---------- Игровой экран ---------- */
+#gameScreen {
+    background: #1a1a2e;
+}
+#gameCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* ---------- HUD (верхняя панель) ---------- */
+#hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.85) !important;
+    backdrop-filter: blur(4px);
+    font-size: 16px;
+    padding: 8px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 10;
+    pointer-events: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#hud > div {
+    pointer-events: auto;
+}
+#hud span {
+    font-weight: 500;
+}
+#hud .btn {
+    font-size: 14px;
+}
+
+/* ---------- Нижняя панель ---------- */
+#bottomPanel {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.85) !important;
+    backdrop-filter: blur(4px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 8px 12px;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    z-index: 10;
+    pointer-events: none;
+}
+#bottomPanel > * {
+    pointer-events: auto;
+}
+#bottomPanel .btn {
+    font-size: 14px;
+    padding: 6px 14px;
+    transition: all 0.2s;
+}
+#bottomPanel .btn:hover {
+    transform: translateY(-2px);
+}
+#bottomPanel .btn-primary.active {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    box-shadow: 0 0 15px rgba(13, 110, 253, 0.5);
+}
+
+/* ---------- Контекстное меню башни ---------- */
+#towerContext {
+    background: rgba(0, 0, 0, 0.92) !important;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 12px 16px;
+    min-width: 200px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+    pointer-events: auto;
+    transition: opacity 0.2s;
+}
+#towerContext p {
+    margin: 6px 0;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+}
+#towerContext p span {
+    color: #ffc107;
+    font-weight: 600;
+}
+#towerContext .btn {
+    font-size: 13px;
+    padding: 4px 12px;
+    margin: 4px 2px;
+}
+#towerContext hr {
+    margin: 6px 0;
+    border-color: rgba(255, 255, 255, 0.15);
+}
+#towerContext .element-btn {
+    padding: 2px 8px;
+    font-size: 16px;
+    line-height: 1;
+}
+#towerContext .element-btn:hover {
+    transform: scale(1.1);
+}
+#towerContext .text-muted {
+    color: #aaa !important;
+    font-size: 13px;
+}
+
+/* ---------- Уведомления (слева) ---------- */
+#notificationContainer {
+    position: fixed;
+    left: 10px;
+    top: 80px;               /* базовый отступ, переопределяется JS */
+    z-index: 9999;
+    width: 300px;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 6px;
+    pointer-events: none;
+}
+#notificationContainer .alert {
+    pointer-events: auto;
+    margin-bottom: 0;
+    animation: slideInLeft 0.3s ease-out;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    font-size: 14px;
+}
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ---------- Достижения (справа) ---------- */
+#achievementContainer {
+    position: fixed;
+    right: 10px;
+    top: 80px;               /* базовый отступ, переопределяется JS */
+    z-index: 9999;
+    width: 320px;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 6px;
+    pointer-events: none;
+}
+#achievementContainer .alert {
+    pointer-events: auto;
+    animation: slideInRight 0.5s ease-out;
+    border-left: 6px solid #ffc107;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.9);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+}
+#achievementContainer .alert h5 {
+    color: #ffc107;
+    margin-bottom: 4px;
+}
+#achievementContainer .alert .badge {
+    font-size: 12px;
+    margin-top: 4px;
+}
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(30px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ---------- Модальные окна ---------- */
+.modal-content {
+    background: rgba(20, 20, 40, 0.95) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+}
+.modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.modal-body {
+    font-size: 15px;
+}
+.modal-body ul {
+    padding-left: 20px;
+}
+.modal-body li {
+    margin-bottom: 6px;
+}
+
+/* ---------- Магазин ---------- */
+#shopItems .card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: transform 0.2s;
+}
+#shopItems .card:hover {
+    transform: translateY(-4px);
+}
+#shopItems .btn {
+    width: 100%;
+}
+
+/* ---------- Статистика ---------- */
+#statsContent ul {
+    font-size: 16px;
+}
+#achievementsList .list-group-item {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ---------- FAQ ---------- */
+#faqContent h5 {
+    color: #ffc107;
+    margin-top: 16px;
+}
+#faqContent hr {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ---------- Адаптивность ---------- */
+@media (max-width: 768px) {
+    #bottomPanel .btn {
+        font-size: 12px;
+        padding: 4px 10px;
+    }
+    #hud {
+        font-size: 13px;
+        padding: 4px 10px;
+    }
+    #hud .btn {
+        font-size: 12px;
+        padding: 2px 8px;
+    }
+    .king-card, .difficulty-card, .location-card {
+        font-size: 12px;
+        padding: 8px !important;
+    }
+    #notificationContainer {
+        width: 220px;
+        left: 5px;
+        top: 70px;          /* JS переопределит, но для запаса */
+    }
+    #achievementContainer {
+        width: 240px;
+        right: 5px;
+        top: 70px;
+    }
+    #towerContext {
+        min-width: 160px;
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    #towerContext p {
+        font-size: 12px;
+    }
+    #towerContext .element-btn {
+        font-size: 14px;
+        padding: 2px 6px;
+    }
+}
+@media (max-width: 480px) {
+    #bottomPanel {
+        gap: 4px;
+    }
+    #bottomPanel .btn {
+        font-size: 10px;
+        padding: 2px 6px;
+    }
+    #hud {
+        font-size: 11px;
+    }
+    #hud .btn {
+        font-size: 10px;
+        padding: 2px 6px;
+    }
+    #notificationContainer {
+        top: 60px;
+        width: 180px;
+    }
+    #achievementContainer {
+        top: 60px;
+        width: 200px;
+    }
+    #towerContext {
+        min-width: 140px;
+        padding: 6px 10px;
+    }
+    #towerContext p {
+        font-size: 11px;
+        margin: 4px 0;
+    }
+    #towerContext .element-btn {
+        font-size: 12px;
+        padding: 2px 5px;
+    }
+}
